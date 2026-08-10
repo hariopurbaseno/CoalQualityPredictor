@@ -61,16 +61,16 @@ document.querySelector(".reset-btn").addEventListener("click", function () {
 document.getElementById("copyButton").addEventListener("click", function () {
 
     const text =
-`TM_AR\t${document.getElementById("tmar").innerText}
-IM\t${document.getElementById("im").innerText}
-VM\t${document.getElementById("vm").innerText}
-FC\t${document.getElementById("fc").innerText}
-ASH_ADB\t${document.getElementById("ash").innerText}
-TS\t${document.getElementById("ts").innerText}
-CV_ADB\t${document.getElementById("cvadb").innerText}
-CV_AR\t${document.getElementById("cvar").innerText}
-CV_DAF\t${document.getElementById("cvdaf").innerText}
-HGI\t${document.getElementById("hgi").innerText}`;
+`${document.getElementById("tmar").innerText.replace(" %","")}\t` +
+`${document.getElementById("im").innerText.replace(" %","")}\t` +
+`${document.getElementById("vm").innerText.replace(" %","")}\t` +
+`${document.getElementById("fc").innerText.replace(" %","")}\t` +
+`${document.getElementById("ash").innerText.replace(" %","")}\t` +
+`${document.getElementById("ts").innerText.replace(" %","")}\t` +
+`${document.getElementById("cvdaf").innerText.replace(" kcal/kg","")}\t` +
+`${document.getElementById("cvadb").innerText.replace(" kcal/kg","")}\t` +
+`${document.getElementById("cvar").innerText.replace(" kcal/kg","")}\t` +
+`${document.getElementById("hgi").innerText}`;
 
     navigator.clipboard.writeText(text);
 
