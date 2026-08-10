@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coal Quality Predictor</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
+
+    <div class="header">
+
+        <h1>⛏️ Coal Quality Predictor</h1>
+
+        <p>
+            Machine Learning Based Coal Quality Prediction
+        </p>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- CONTENT -->
+    <!-- ========================================= -->
+
+    <div class="content">
+
+        <!-- ========================================= -->
+        <!-- INPUT -->
+        <!-- ========================================= -->
+
+        <div class="card">
+
+            <h2>Input Parameters</h2>
+
+            <label>Coal Seam</label>
+
+            <select id="seam">
+
+                <option>T117</option>
+                <option>T120</option>
+                <option>T121</option>
+
+            </select>
+
+            <label>North Coordinate</label>
+
+            <input
+                id="north"
+                type="number"
+                value="20219.5"
+            >
+
+            <label>East Coordinate</label>
+
+            <input
+                id="east"
+                type="number"
+                value="3903"
+            >
+
+            <label>Elevation (RL)</label>
+
+            <input
+                id="rl"
+                type="number"
+                value="56"
+            >
+
+            <div class="button-group">
+
+                <button
+                    id="predictBtn"
+                    class="predict-btn"
+                >
+                    🔮 Predict
+                </button>
+
+                <button
+                    id="resetBtn"
+                    class="reset-btn"
+                    type="button"
+                >
+                    Reset
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- RESULT -->
+        <!-- ========================================= -->
+
+        <div class="card">
+
+            <div class="result-header">
+
+                <h2>Prediction Result</h2>
+
+                <button
+                    id="copyButton"
+                    class="copy-btn"
+                >
+                    📋 Copy
+                </button>
+
+            </div>
+
+            <table class="result-table">
+
+                <tr>
+                    <td>TM_AR</td>
+                    <td id="tmar">-</td>
+                </tr>
+
+                <tr>
+                    <td>IM</td>
+                    <td id="im">-</td>
+                </tr>
+
+                <tr>
+                    <td>VM</td>
+                    <td id="vm">-</td>
+                </tr>
+
+                <tr>
+                    <td>FC</td>
+                    <td id="fc">-</td>
+                </tr>
+
+                <tr>
+                    <td>ASH_ADB</td>
+                    <td id="ash">-</td>
+                </tr>
+
+                <tr>
+                    <td>TS</td>
+                    <td id="ts">-</td>
+                </tr>
+
+                <tr>
+                    <td>CV_ADB</td>
+                    <td id="cvadb">-</td>
+                </tr>
+
+                <tr>
+                    <td>CV_AR</td>
+                    <td id="cvar">-</td>
+                </tr>
+
+                <tr>
+                    <td>CV_DAF</td>
+                    <td id="cvdaf">-</td>
+                </tr>
+
+                <tr>
+                    <td>HGI</td>
+                    <td id="hgi">-</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
