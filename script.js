@@ -1,0 +1,1 @@
+console.log("Coal Quality Predictor Loaded");

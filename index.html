@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coal Quality Predictor</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+
+            <h1>⛏️ Coal Quality Predictor</h1>
+
+            <p>
+                Machine Learning Based Coal Quality Prediction
+            </p>
+
+        </div>
+
+        <div class="content">
+
+            <div class="card">
+
+                <h2>Input Parameters</h2>
+
+                <label>Coal Seam</label>
+                <select>
+
+                    <option>T117</option>
+                    <option>T120</option>
+                    <option>T121</option>
+
+                </select>
+
+                <label>North Coordinate</label>
+                <input type="number">
+
+                <label>East Coordinate</label>
+                <input type="number">
+
+                <label>Elevation (RL)</label>
+                <input type="number">
+
+                <button>Predict</button>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Prediction Result</h2>
+
+                <p>No prediction yet.</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
