@@ -392,3 +392,86 @@ grid-template-columns:1fr;
 }
 
 }
+/* ===========================
+   Prediction Table
+=========================== */
+
+.result-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:20px;
+
+}
+
+.copy-btn{
+
+background:#16a34a;
+
+color:white;
+
+border:none;
+
+padding:10px 18px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+font-weight:600;
+
+}
+
+.copy-btn:hover{
+
+background:#15803d;
+
+}
+
+.result-table{
+
+width:100%;
+
+border-collapse:collapse;
+
+font-size:15px;
+
+}
+
+.result-table th{
+
+background:#003366;
+
+color:white;
+
+padding:12px;
+
+text-align:left;
+
+}
+
+.result-table td{
+
+padding:12px;
+
+border-bottom:1px solid #e5e7eb;
+
+}
+
+.result-table tr:nth-child(even){
+
+background:#f8fafc;
+
+}
+
+.result-table td:last-child{
+
+font-weight:bold;
+
+color:#003366;
+
+}
