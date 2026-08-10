@@ -1,5 +1,45 @@
 from flask import Flask, request, jsonify, send_from_directory
 import os
+import pandas as pd
+
+
+# ==========================================================
+# SAME FUNCTION USED WHEN MODEL WAS TRAINED
+# ==========================================================
+
+def calculate_derived_quality(pred):
+
+    pred = pred.copy()
+
+    pred["VM"] = (
+        100
+        - pred["IM"]
+        - pred["FC"]
+        - pred["ASH_ADB"]
+    )
+
+    pred["CV_AR"] = (
+        pred["CV_ADB"]
+        * (100 - pred["TM_AR"])
+        / (100 - pred["IM"])
+    )
+
+    pred["CV_DAF"] = (
+        pred["CV_ADB"]
+        * 100
+        / (
+            100
+            - pred["ASH_ADB"]
+            - pred["IM"]
+        )
+    )
+
+    return pred
+
+
+# ==========================================================
+# IMPORT MODEL
+# ==========================================================
 
 from predictor import predict_quality, models
 
@@ -37,8 +77,10 @@ def get_seams():
 
     try:
 
-        # Get feature names from the trained model
-        feature_names = models["TM_AR"].feature_names_in_
+        feature_names = (
+            models["TM_AR"]
+            .feature_names_in_
+        )
 
         seam_list = []
 
@@ -90,11 +132,6 @@ def predict():
             data["rl"]
         )
 
-
-        # ------------------------------------------
-        # Run prediction
-        # ------------------------------------------
-
         result = predict_quality(
 
             seam=seam,
@@ -104,9 +141,7 @@ def predict():
 
         )
 
-
         return jsonify(result)
-
 
     except Exception as e:
 
@@ -116,7 +151,7 @@ def predict():
 
 
 # ==========================================================
-# RUN FLASK
+# RUN
 # ==========================================================
 
 if __name__ == "__main__":

@@ -86,7 +86,18 @@ async function predictQuality() {
     const north = document.getElementById("north").value;
     const east = document.getElementById("east").value;
     const rl = document.getElementById("rl").value;
+// -----------------------------
+// Model Confidence
+// -----------------------------
 
+const confidence = Number(data.Confidence);
+
+document.getElementById("confidence-stars").textContent =
+    getConfidenceStars(confidence);
+
+document.getElementById("confidence-level").textContent =
+    confidence.toFixed(1) + "% — " +
+    getConfidenceLevel(confidence);
 
     // ------------------------------------------------------
     // Validation
@@ -369,4 +380,56 @@ Machine Learning Based Prediction`;
 
     }
 
+}// ==========================================================
+// CONFIDENCE LEVEL
+// ==========================================================
+
+function getConfidenceLevel(confidence) {
+
+    if (confidence >= 90) {
+        return "Excellent";
+    }
+
+    if (confidence >= 80) {
+        return "Very Good";
+    }
+
+    if (confidence >= 70) {
+        return "Good";
+    }
+
+    if (confidence >= 60) {
+        return "Moderate";
+    }
+
+    return "Low";
+}
+
+
+// ==========================================================
+// CONFIDENCE STARS
+// ==========================================================
+
+function getConfidenceStars(confidence) {
+
+    let stars = 0;
+
+    if (confidence >= 90) {
+        stars = 5;
+    }
+    else if (confidence >= 80) {
+        stars = 4;
+    }
+    else if (confidence >= 70) {
+        stars = 3;
+    }
+    else if (confidence >= 60) {
+        stars = 2;
+    }
+    else {
+        stars = 1;
+    }
+
+    return "★".repeat(stars) +
+           "☆".repeat(5 - stars);
 }
