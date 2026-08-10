@@ -1,39 +1,127 @@
 // ==========================================================
-// Coal Quality Predictor
+// COAL QUALITY PREDICTOR
 // ==========================================================
 
-console.log("Coal Quality Predictor Loaded");
-
 // ==========================================================
-// Predict
+// LOAD SEAM LIST
 // ==========================================================
 
-document.getElementById("predictBtn").addEventListener("click", async function () {
+window.addEventListener("DOMContentLoaded", function () {
+    loadSeams();
+});
 
-    const button = this;
+
+async function loadSeams() {
+
+    const seamSelect = document.getElementById("seam");
+
+    try {
+
+        const response = await fetch("/seams");
+
+        if (!response.ok) {
+            throw new Error("Failed to load seam list");
+        }
+
+        const seams = await response.json();
+
+        seamSelect.innerHTML = "";
+
+        seams.forEach(function (seam) {
+
+            const option = document.createElement("option");
+
+            option.value = seam;
+            option.textContent = seam;
+
+            seamSelect.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.warn("Seam endpoint not available:", error);
+
+        // --------------------------------------------------
+        // Temporary fallback
+        // --------------------------------------------------
+
+        seamSelect.innerHTML = "";
+
+        const fallbackSeams = [
+            "T117",
+            "T120",
+            "T121"
+        ];
+
+        fallbackSeams.forEach(function (seam) {
+
+            const option = document.createElement("option");
+
+            option.value = seam;
+            option.textContent = seam;
+
+            seamSelect.appendChild(option);
+
+        });
+
+    }
+
+}
+
+
+// ==========================================================
+// PREDICT QUALITY
+// ==========================================================
+
+async function predictQuality() {
+
+    const button = document.getElementById("predictBtn");
+
+    // ------------------------------------------------------
+    // Get input values
+    // ------------------------------------------------------
+
+    const seam = document.getElementById("seam").value;
+    const north = document.getElementById("north").value;
+    const east = document.getElementById("east").value;
+    const rl = document.getElementById("rl").value;
+
+
+    // ------------------------------------------------------
+    // Validation
+    // ------------------------------------------------------
+
+    if (!seam) {
+
+        alert("Please select a Coal Seam.");
+
+        return;
+
+    }
+
+    if (north === "" || east === "" || rl === "") {
+
+        alert("Please complete all coordinate and elevation inputs.");
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // Loading state
+    // ------------------------------------------------------
 
     button.disabled = true;
     button.innerHTML = "⏳ Predicting...";
 
+
     try {
 
-        const payload = {
-
-            seam: document.getElementById("seam").value,
-
-            north: parseFloat(
-                document.getElementById("north").value
-            ),
-
-            east: parseFloat(
-                document.getElementById("east").value
-            ),
-
-            rl: parseFloat(
-                document.getElementById("rl").value
-            )
-
-        };
+        // --------------------------------------------------
+        // Send request to Flask
+        // --------------------------------------------------
 
         const response = await fetch("/predict", {
 
@@ -43,120 +131,242 @@ document.getElementById("predictBtn").addEventListener("click", async function (
                 "Content-Type": "application/json"
             },
 
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+
+                seam: seam,
+                north: parseFloat(north),
+                east: parseFloat(east),
+                rl: parseFloat(rl)
+
+            })
 
         });
 
-        if (!response.ok) {
 
-            const err = await response.json();
-            throw new Error(err.error);
+        // --------------------------------------------------
+        // Read response
+        // --------------------------------------------------
+
+        const data = await response.json();
+
+
+        // --------------------------------------------------
+        // Backend error
+        // --------------------------------------------------
+
+        if (!response.ok || data.error) {
+
+            throw new Error(
+                data.error || "Prediction failed."
+            );
 
         }
 
-        const result = await response.json();
 
-        document.getElementById("tmar").innerHTML =
-            result.TM_AR.toFixed(2) + " %";
+        // --------------------------------------------------
+        // Update Prediction Detail
+        // --------------------------------------------------
 
-        document.getElementById("im").innerHTML =
-            result.IM.toFixed(2) + " %";
+        document.getElementById("tmar").textContent =
+            formatNumber(data.TM_AR, 2) + " %";
 
-        document.getElementById("vm").innerHTML =
-            result.VM.toFixed(2) + " %";
+        document.getElementById("im").textContent =
+            formatNumber(data.IM, 2) + " %";
 
-        document.getElementById("fc").innerHTML =
-            result.FC.toFixed(2) + " %";
+        document.getElementById("vm").textContent =
+            formatNumber(data.VM, 2) + " %";
 
-        document.getElementById("ash").innerHTML =
-            result.ASH_ADB.toFixed(2) + " %";
+        document.getElementById("fc").textContent =
+            formatNumber(data.FC, 2) + " %";
 
-        document.getElementById("ts").innerHTML =
-            result.TS.toFixed(3) + " %";
+        document.getElementById("ash").textContent =
+            formatNumber(data.ASH_ADB, 2) + " %";
 
-        document.getElementById("cvadb").innerHTML =
-            result.CV_ADB.toFixed(0) + " kcal/kg";
+        document.getElementById("ts").textContent =
+            formatNumber(data.TS, 3) + " %";
 
-        document.getElementById("cvar").innerHTML =
-            result.CV_AR.toFixed(0) + " kcal/kg";
+        document.getElementById("cvadb").textContent =
+            formatNumber(data.CV_ADB, 0) + " kcal/kg";
 
-        document.getElementById("cvdaf").innerHTML =
-            result.CV_DAF.toFixed(0) + " kcal/kg";
+        document.getElementById("cvar").textContent =
+            formatNumber(data.CV_AR, 0) + " kcal/kg";
 
-        document.getElementById("hgi").innerHTML =
-            result.HGI.toFixed(0);
+        document.getElementById("cvdaf").textContent =
+            formatNumber(data.CV_DAF, 0) + " kcal/kg";
 
-    }
+        document.getElementById("hgi").textContent =
+            formatNumber(data.HGI, 0);
 
-    catch (err) {
 
-        alert("Prediction Failed\n\n" + err.message);
+        // --------------------------------------------------
+        // Update Summary Cards
+        // --------------------------------------------------
 
-        console.error(err);
+        document.getElementById("summary-cvar").textContent =
+            formatNumber(data.CV_AR, 0);
 
-    }
+        document.getElementById("summary-hgi").textContent =
+            formatNumber(data.HGI, 0);
 
-    finally {
+
+        // --------------------------------------------------
+        // Update status
+        // --------------------------------------------------
+
+        const status = document.querySelector(".status-ready");
+
+        if (status) {
+
+            status.textContent = "🟢 Prediction Completed";
+
+        }
+
+
+    } catch (error) {
+
+        console.error("Prediction Error:", error);
+
+        alert(
+            "Prediction failed:\n\n" +
+            error.message
+        );
+
+    } finally {
+
+        // --------------------------------------------------
+        // Restore button
+        // --------------------------------------------------
 
         button.disabled = false;
-        button.innerHTML = "🔮 Predict";
+        button.innerHTML = "⛏️ Predict";
 
     }
 
-});
+}
 
 
 // ==========================================================
-// Reset
+// NUMBER FORMATTER
 // ==========================================================
 
-document.getElementById("resetBtn").addEventListener("click", function () {
+function formatNumber(value, decimals) {
 
-    const ids = [
+    if (value === null || value === undefined || isNaN(value)) {
 
-        "tmar",
-        "im",
-        "vm",
-        "fc",
-        "ash",
-        "ts",
-        "cvadb",
-        "cvar",
-        "cvdaf",
-        "hgi"
+        return "--";
 
-    ];
+    }
 
-    ids.forEach(function (id) {
+    return Number(value).toLocaleString(
+        "en-US",
+        {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+        }
+    );
 
-        document.getElementById(id).innerHTML = "-";
-
-    });
-
-});
+}
 
 
 // ==========================================================
-// Copy To Clipboard
+// RESET FORM
 // ==========================================================
 
-document.getElementById("copyButton").addEventListener("click", function () {
+function resetForm() {
 
-    const text =
+    document.getElementById("north").value = "";
+    document.getElementById("east").value = "";
+    document.getElementById("rl").value = "";
 
-        document.getElementById("tmar").innerText.replace(" %", "") + "\t" +
-        document.getElementById("im").innerText.replace(" %", "") + "\t" +
-        document.getElementById("vm").innerText.replace(" %", "") + "\t" +
-        document.getElementById("fc").innerText.replace(" %", "") + "\t" +
-        document.getElementById("ash").innerText.replace(" %", "") + "\t" +
-        document.getElementById("ts").innerText.replace(" %", "") + "\t" +
-        document.getElementById("cvdaf").innerText.replace(" kcal/kg", "") + "\t" +
-        document.getElementById("cvadb").innerText.replace(" kcal/kg", "") + "\t" +
-        document.getElementById("cvar").innerText.replace(" kcal/kg", "") + "\t" +
-        document.getElementById("hgi").innerText;
 
-    navigator.clipboard.writeText(text);
+    // ------------------------------------------------------
+    // Reset prediction results
+    // ------------------------------------------------------
 
-    alert("Prediction copied to clipboard.");
+    document.getElementById("summary-cvar").textContent = "--";
+    document.getElementById("summary-hgi").textContent = "--";
 
-});
+
+    document.getElementById("tmar").textContent = "--";
+    document.getElementById("im").textContent = "--";
+    document.getElementById("vm").textContent = "--";
+    document.getElementById("fc").textContent = "--";
+    document.getElementById("ash").textContent = "--";
+    document.getElementById("ts").textContent = "--";
+    document.getElementById("cvadb").textContent = "--";
+    document.getElementById("cvar").textContent = "--";
+    document.getElementById("cvdaf").textContent = "--";
+    document.getElementById("hgi").textContent = "--";
+
+
+    // ------------------------------------------------------
+    // Reset status
+    // ------------------------------------------------------
+
+    const status = document.querySelector(".status-ready");
+
+    if (status) {
+
+        status.textContent = "🟢 Ready";
+
+    }
+
+}
+
+
+// ==========================================================
+// COPY RESULT
+// ==========================================================
+
+async function copyResult() {
+
+    const seam = document.getElementById("seam").value;
+    const north = document.getElementById("north").value;
+    const east = document.getElementById("east").value;
+    const rl = document.getElementById("rl").value;
+
+
+    const resultText =
+
+`COAL QUALITY PREDICTION
+================================
+
+Input Parameters
+----------------
+Coal Seam       : ${seam}
+North Coordinate: ${north}
+East Coordinate : ${east}
+Elevation (RL)  : ${rl}
+
+Prediction Result
+-----------------
+TM_AR    : ${document.getElementById("tmar").innerText}
+IM       : ${document.getElementById("im").innerText}
+VM       : ${document.getElementById("vm").innerText}
+FC       : ${document.getElementById("fc").innerText}
+ASH_ADB  : ${document.getElementById("ash").innerText}
+TS       : ${document.getElementById("ts").innerText}
+CV_ADB   : ${document.getElementById("cvadb").innerText}
+CV_AR    : ${document.getElementById("cvar").innerText}
+CV_DAF   : ${document.getElementById("cvdaf").innerText}
+HGI      : ${document.getElementById("hgi").innerText}
+
+================================
+Machine Learning Based Prediction`;
+
+
+    try {
+
+        await navigator.clipboard.writeText(resultText);
+
+        alert("Prediction result copied.");
+
+    } catch (error) {
+
+        console.error("Copy failed:", error);
+
+        alert("Unable to copy prediction result.");
+
+    }
+
+}
