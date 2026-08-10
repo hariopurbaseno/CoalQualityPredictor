@@ -127,3 +127,182 @@
         <!-- RIGHT PANEL -->
 
         <section class="content">
+
+                        <!-- ============================= -->
+            <!-- Prediction Summary -->
+            <!-- ============================= -->
+
+            <div class="section-title">
+
+                <h2>Prediction Summary</h2>
+
+                <div class="status-ready">
+
+                    🟢 Ready
+
+                </div>
+
+            </div>
+
+            <div class="summary-grid">
+
+                <div class="summary-card card-blue">
+
+                    <span>CV_AR</span>
+
+                    <h2 id="summary-cvar">--</h2>
+
+                    <small>kcal/kg</small>
+
+                </div>
+
+                <div class="summary-card card-green">
+
+                    <span>HGI</span>
+
+                    <h2 id="summary-hgi">--</h2>
+
+                    <small>Hardgrove Index</small>
+
+                </div>
+
+                <div class="summary-card card-orange">
+
+                    <span>Reliability</span>
+
+                    <h2 id="summary-reliability">★★★★★</h2>
+
+                    <small>Excellent</small>
+
+                </div>
+
+                <div class="summary-card card-teal">
+
+                    <span>QC Status</span>
+
+                    <h2 id="summary-status">READY</h2>
+
+                    <small>Prediction Status</small>
+
+                </div>
+
+            </div>
+
+            <!-- ============================= -->
+            <!-- Prediction Detail -->
+            <!-- ============================= -->
+
+            <div class="result-header">
+
+                <h2>Prediction Detail</h2>
+
+                <button
+                    id="copyButton"
+                    class="copy-btn">
+
+                    📋 Copy Result
+
+                </button>
+
+            </div>
+
+            <table class="result-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Parameter</th>
+
+                        <th>Prediction</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr><td>TM_AR</td><td id="tmar">--</td></tr>
+
+                    <tr><td>IM</td><td id="im">--</td></tr>
+
+                    <tr><td>VM</td><td id="vm">--</td></tr>
+
+                    <tr><td>FC</td><td id="fc">--</td></tr>
+
+                    <tr><td>ASH_ADB</td><td id="ash">--</td></tr>
+
+                    <tr><td>TS</td><td id="ts">--</td></tr>
+
+                    <tr><td>CV_DAF</td><td id="cvdaf">--</td></tr>
+
+                    <tr><td>CV_ADB</td><td id="cvadb">--</td></tr>
+
+                    <tr><td>CV_AR</td><td id="cvar">--</td></tr>
+
+                    <tr><td>HGI</td><td id="hgi">--</td></tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+        <!-- ===================================== -->
+    <!-- Model Reliability -->
+    <!-- ===================================== -->
+
+    <section class="reliability-section">
+
+        <h2>Model Reliability</h2>
+
+        <div class="reliability-grid">
+
+            <div class="reliability-card">
+
+                <h3>★★★★★ Excellent</h3>
+
+                <p>
+                    QC Status :
+                    Within QC Tolerance
+                </p>
+
+            </div>
+
+            <div class="reliability-card">
+
+                <h3>Prediction Confidence</h3>
+
+                <p id="confidence">
+
+                    97.8%
+
+                </p>
+
+            </div>
+
+            <div class="reliability-card">
+
+                <h3>QC Tolerance</h3>
+
+                <p>
+
+                    ±75 kcal/kg (CV_AR)
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
