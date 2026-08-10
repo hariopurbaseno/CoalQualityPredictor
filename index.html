@@ -4,17 +4,24 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Coal Quality Predictor</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+          href="style.css">
 
 </head>
 
 <body>
 
+<div class="container">
+
+    <!-- ================================= -->
     <!-- HEADER -->
+    <!-- ================================= -->
 
     <header class="header">
 
@@ -22,43 +29,56 @@
 
             <h1>⛏️ Coal Quality Predictor</h1>
 
-            <p>Machine Learning Based Coal Quality Prediction</p>
+            <p>
+                Machine Learning Based Coal Quality Prediction
+            </p>
 
         </div>
 
         <div class="header-right">
 
-            <span class="version">Model Version 2.0</span>
+            <div class="version-card">
+
+                <span>Deployment Model</span>
+
+                <strong>Random Forest Regression</strong>
+
+                <small>Version 2.0</small>
+
+            </div>
 
         </div>
 
     </header>
 
-
-
+    <!-- ================================= -->
     <!-- MAIN -->
+    <!-- ================================= -->
 
-    <main class="main-container">
+    <main class="main-layout">
 
         <!-- LEFT PANEL -->
 
-        <section class="panel">
+        <aside class="sidebar">
 
             <h2>Input Parameters</h2>
 
             <label>Pit Location</label>
-            <select>
+
+            <select id="pit">
                 <option>Tutupan</option>
                 <option>Wara</option>
                 <option>Paringin</option>
             </select>
 
             <label>Coal Seam</label>
-            <select>
+
+            <select id="seam">
 
                 <option>T117</option>
                 <option>T120</option>
                 <option>T121</option>
+                <option>T112</option>
                 <option>C1</option>
                 <option>C2</option>
                 <option>C3</option>
@@ -66,13 +86,25 @@
             </select>
 
             <label>North Coordinate</label>
-            <input type="number" placeholder="20219.50">
+
+            <input
+                id="north"
+                type="number"
+                value="20219.50">
 
             <label>East Coordinate</label>
-            <input type="number" placeholder="3903.00">
+
+            <input
+                id="east"
+                type="number"
+                value="3903.00">
 
             <label>Elevation (RL)</label>
-            <input type="number" placeholder="56.00">
+
+            <input
+                id="rl"
+                type="number"
+                value="56">
 
             <div class="button-group">
 
@@ -90,156 +122,8 @@
 
             </div>
 
-        </section>
-
-
+        </aside>
 
         <!-- RIGHT PANEL -->
 
-        <section class="panel">
-
-    <div class="result-header">
-
-<h2>Prediction Summary</h2>
-
-<div class="summary-grid">
-
-    <!-- CV_AR -->
-    <div class="summary-card">
-        <span>CV_AR</span>
-        <h2 id="summary-cvar">--</h2>
-        <small>kcal/kg</small>
-    </div>
-
-    <!-- HGI -->
-    <div class="summary-card">
-        <span>HGI</span>
-        <h2 id="summary-hgi">--</h2>
-        <small>Hardgrove Index</small>
-    </div>
-
-    <!-- Reliability -->
-    <div class="summary-card">
-        <span>Reliability</span>
-        <h2 id="summary-reliability">★★★★★</h2>
-        <small>Excellent</small>
-    </div>
-
-    <!-- QC -->
-    <div class="summary-card">
-        <span>QC Status</span>
-        <h2 id="summary-status">READY</h2>
-        <small>Prediction Status</small>
-    </div>
-
-</div>
-
-<div class="result-header">
-
-    <h2>Prediction Detail</h2>
-
-    <button id="copyButton" class="copy-btn">
-        📋 Copy Result
-    </button>
-
-</div>
-
-<table class="result-table">
-
-        <thead>
-
-            <tr>
-
-                <th>Parameter</th>
-
-                <th>Prediction</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            <tr><td>TM_AR</td><td id="tmar">--</td></tr>
-
-            <tr><td>IM</td><td id="im">--</td></tr>
-
-            <tr><td>VM</td><td id="vm">--</td></tr>
-
-            <tr><td>FC</td><td id="fc">--</td></tr>
-
-            <tr><td>ASH_ADB</td><td id="ash">--</td></tr>
-
-            <tr><td>TS</td><td id="ts">--</td></tr>
-
-            <tr><td>CV_ADB</td><td id="cvadb">--</td></tr>
-
-            <tr><td>CV_AR</td><td id="cvar">--</td></tr>
-
-            <tr><td>CV_DAF</td><td id="cvdaf">--</td></tr>
-
-            <tr><td>HGI</td><td id="hgi">--</td></tr>
-
-        </tbody>
-
-    </table>
-
-</section>
-
-    </main>
-
-
-
-    <!-- RELIABILITY -->
-
-    <section class="reliability">
-
-        <h2>Model Reliability</h2>
-
-        <div class="reliability-box">
-
-            <div>
-
-                <h3>★★★★★ Excellent</h3>
-
-                <p>QC Status : Within QC Tolerance</p>
-
-            </div>
-
-            <div>
-
-                <h3>Confidence</h3>
-
-                <p>97.8%</p>
-
-            </div>
-
-            <div>
-
-                <h3>QC Tolerance</h3>
-
-                <p>±75 kcal (CV_AR)</p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- FOOTER -->
-
-    <footer>
-
-        Developed by Hario Purbaseno | Azure Machine Learning | Coal Quality Predictor v2.0
-
-    </footer>
-
-
-
-<script src="script.js"></script>
-
-</body>
-
-</html>
+        <section class="content">
