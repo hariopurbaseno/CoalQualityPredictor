@@ -100,27 +100,32 @@
 
     <div class="result-header">
 
-        <h2>Prediction Result</h2>
+<h2>Prediction Summary</h2>
+
 <div class="summary-grid">
 
+    <!-- CV_AR -->
     <div class="summary-card">
         <span>CV_AR</span>
         <h2 id="summary-cvar">--</h2>
         <small>kcal/kg</small>
     </div>
 
+    <!-- HGI -->
     <div class="summary-card">
         <span>HGI</span>
         <h2 id="summary-hgi">--</h2>
         <small>Hardgrove Index</small>
     </div>
 
+    <!-- Reliability -->
     <div class="summary-card">
         <span>Reliability</span>
-        <h2>★★★★★</h2>
+        <h2 id="summary-reliability">★★★★★</h2>
         <small>Excellent</small>
     </div>
 
+    <!-- QC -->
     <div class="summary-card">
         <span>QC Status</span>
         <h2 id="summary-status">READY</h2>
@@ -128,13 +133,18 @@
     </div>
 
 </div>
-        <button id="copyButton" class="copy-btn">
-            📋 Copy Result
-        </button>
 
-    </div>
+<div class="result-header">
 
-    <table class="result-table">
+    <h2>Prediction Detail</h2>
+
+    <button id="copyButton" class="copy-btn">
+        📋 Copy Result
+    </button>
+
+</div>
+
+<table class="result-table">
 
         <thead>
 
