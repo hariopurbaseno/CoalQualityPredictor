@@ -1,4 +1,102 @@
-<section class="panel">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coal Quality Predictor</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="header-left">
+
+            <h1>⛏️ Coal Quality Predictor</h1>
+
+            <p>Machine Learning Based Coal Quality Prediction</p>
+
+        </div>
+
+        <div class="header-right">
+
+            <span class="version">Model Version 2.0</span>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main-container">
+
+        <!-- LEFT PANEL -->
+
+        <section class="panel">
+
+            <h2>Input Parameters</h2>
+
+            <label>Pit Location</label>
+            <select>
+                <option>Tutupan</option>
+                <option>Wara</option>
+                <option>Paringin</option>
+            </select>
+
+            <label>Coal Seam</label>
+            <select>
+
+                <option>T117</option>
+                <option>T120</option>
+                <option>T121</option>
+                <option>C1</option>
+                <option>C2</option>
+                <option>C3</option>
+
+            </select>
+
+            <label>North Coordinate</label>
+            <input type="number" placeholder="20219.50">
+
+            <label>East Coordinate</label>
+            <input type="number" placeholder="3903.00">
+
+            <label>Elevation (RL)</label>
+            <input type="number" placeholder="56.00">
+
+            <div class="button-group">
+
+                <button class="predict-btn">
+
+                    🔮 Predict
+
+                </button>
+
+                <button class="reset-btn">
+
+                    Reset
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- RIGHT PANEL -->
+
+        <section class="panel">
 
     <div class="result-header">
 
@@ -51,3 +149,61 @@
     </table>
 
 </section>
+
+    </main>
+
+
+
+    <!-- RELIABILITY -->
+
+    <section class="reliability">
+
+        <h2>Model Reliability</h2>
+
+        <div class="reliability-box">
+
+            <div>
+
+                <h3>★★★★★ Excellent</h3>
+
+                <p>QC Status : Within QC Tolerance</p>
+
+            </div>
+
+            <div>
+
+                <h3>Confidence</h3>
+
+                <p>97.8%</p>
+
+            </div>
+
+            <div>
+
+                <h3>QC Tolerance</h3>
+
+                <p>±75 kcal (CV_AR)</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        Developed by Hario Purbaseno | Azure Machine Learning | Coal Quality Predictor v2.0
+
+    </footer>
+
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
