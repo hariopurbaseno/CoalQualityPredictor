@@ -2,6 +2,38 @@ import joblib
 import pandas as pd
 import numpy as np
 
+# ==========================================================
+# DERIVED QUALITY CALCULATION
+# ==========================================================
+
+def calculate_derived_quality(pred):
+
+    pred = pred.copy()
+
+    pred["VM"] = (
+        100
+        - pred["IM"]
+        - pred["FC"]
+        - pred["ASH_ADB"]
+    )
+
+    pred["CV_AR"] = (
+        pred["CV_ADB"]
+        * (100 - pred["TM_AR"])
+        / (100 - pred["IM"])
+    )
+
+    pred["CV_DAF"] = (
+        pred["CV_ADB"]
+        * 100
+        / (
+            100
+            - pred["ASH_ADB"]
+            - pred["IM"]
+        )
+    )
+
+    return pred
 
 # ==========================================================
 # LOAD DEPLOYMENT BUNDLE
