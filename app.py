@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, send_from_directory
 import os
 import pandas as pd
 
-
 # ==========================================================
 # SAME FUNCTION USED WHEN MODEL WAS TRAINED
 # ==========================================================
@@ -36,6 +35,28 @@ def calculate_derived_quality(pred):
 
     return pred
 
+# ==========================================================
+# IMPORT MODEL
+# ==========================================================
+
+import sys
+
+# Model .pkl menyimpan referensi ke
+# __main__.calculate_derived_quality.
+# Saat dijalankan Gunicorn, app.py bukan __main__,
+# sehingga kita expose fungsi tersebut ke __main__.
+
+sys.modules["__main__"].calculate_derived_quality = calculate_derived_quality
+
+from predictor import predict_quality, models
+
+
+
+# ==========================================================
+# MAKE FUNCTION AVAILABLE AS __main__
+# ==========================================================
+
+sys.modules["__main__"].calculate_derived_quality = calculate_derived_quality
 
 # ==========================================================
 # IMPORT MODEL
