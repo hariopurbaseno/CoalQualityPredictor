@@ -86,18 +86,6 @@ async function predictQuality() {
     const north = document.getElementById("north").value;
     const east = document.getElementById("east").value;
     const rl = document.getElementById("rl").value;
-// -----------------------------
-// Model Confidence
-// -----------------------------
-
-const confidence = Number(data.Confidence);
-
-document.getElementById("confidence-stars").textContent =
-    getConfidenceStars(confidence);
-
-document.getElementById("confidence-level").textContent =
-    confidence.toFixed(1) + "% — " +
-    getConfidenceLevel(confidence);
 
     // ------------------------------------------------------
     // Validation
@@ -173,6 +161,18 @@ document.getElementById("confidence-level").textContent =
 
         }
 
+// -----------------------------
+// Model Confidence
+// -----------------------------
+
+const confidence = Number(data.Confidence);
+
+document.getElementById("confidence-stars").textContent =
+    getConfidenceStars(confidence);
+
+document.getElementById("confidence-level").textContent =
+    confidence.toFixed(1) + "% — " +
+    getConfidenceLevel(confidence);
 
         // --------------------------------------------------
         // Update Prediction Detail
