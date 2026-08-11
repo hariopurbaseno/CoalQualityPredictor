@@ -161,6 +161,17 @@ async function predictQuality() {
 
         }
 
+// ------------------------------------------------------
+// Update Reliability
+// ------------------------------------------------------
+
+document.getElementById("reliability-level").textContent =
+    data.Reliability;
+
+document.getElementById("reliability-detail").textContent =
+    data.Within_QC.toFixed(2) + "% Within ±75 kcal/kg";
+
+
 // -----------------------------
 // Model Confidence
 // -----------------------------

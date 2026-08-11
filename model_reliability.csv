@@ -1,0 +1,28 @@
+Seam,Samples,Above75_%,Within_QC_%,Reliability,Confidence
+T116L,3,66.67,33.33,Very Low,Very Low
+T118U,9,22.22,77.78,Low,Very Low
+T113,5,20.0,80.0,Moderate,Very Low
+T112L,28,17.86,82.14,Moderate,Medium
+T117,16,12.5,87.5,Moderate,Low
+T112U,11,9.09,90.91,Good,Low
+C3,178,8.99,91.01,Good,High
+T121,21,4.76,95.24,Excellent,Medium
+T210,132,4.55,95.45,Excellent,High
+T110,77,3.9,96.1,Excellent,High
+F1,28,3.57,96.43,Excellent,Medium
+FU,31,3.23,96.77,Excellent,Medium
+T120,141,2.13,97.87,Excellent,High
+T115U,55,1.82,98.18,Excellent,High
+D,112,1.79,98.21,Excellent,High
+E,56,1.79,98.21,Excellent,High
+T200,284,0.7,99.3,Excellent,High
+C2,219,0.0,100.0,Excellent,High
+C1,184,0.0,100.0,Excellent,High
+T220,158,0.0,100.0,Excellent,High
+T116A,32,0.0,100.0,Excellent,Medium
+T116U,32,0.0,100.0,Excellent,Medium
+FL,13,0.0,100.0,Excellent,Low
+E1,9,0.0,100.0,Excellent,Very Low
+T115A,3,0.0,100.0,Excellent,Very Low
+T115L,3,0.0,100.0,Excellent,Very Low
+T112,1,0.0,100.0,Excellent,Very Low

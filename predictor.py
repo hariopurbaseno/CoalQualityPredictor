@@ -1,3 +1,5 @@
+from unittest import result
+
 import joblib
 import pandas as pd
 import numpy as np
@@ -47,77 +49,42 @@ models = bundle["models"]
 
 formula_engine = bundle["formula_engine"]
 
+# ==========================================================
+# LOAD MODEL RELIABILITY SUMMARY
+# ==========================================================
+
+reliability_data = pd.read_csv(
+    "model_reliability.csv"
+)
+
+reliability_data = reliability_data.set_index(
+    "Seam"
+)
+
+
 
 # ==========================================================
-# MODEL CONFIDENCE
+# CONFIDENCE & RELIABILITY
 # ==========================================================
 
-def calculate_model_confidence(models, X):
+def get_model_reliability(seam):
 
-    uncertainties = []
+    if seam not in reliability_data.index:
+        return {
+            "Confidence": "Very Low",
+            "Reliability": "Very Low",
+            "Sample_Count": 0,
+            "Within_QC": 0.0
+        }
 
-    for target, model in models.items():
+    row = reliability_data.loc[seam]
 
-        # Random Forest
-        if not hasattr(model, "estimators_"):
-            continue
-
-        tree_predictions = np.array([
-            estimator.predict(X)[0]
-            for estimator in model.estimators_
-        ])
-
-        mean_prediction = np.mean(
-            tree_predictions
-        )
-
-        std_prediction = np.std(
-            tree_predictions
-        )
-
-        # Relative disagreement between trees
-        relative_uncertainty = (
-            std_prediction
-            / max(abs(mean_prediction), 1e-6)
-        )
-
-        uncertainties.append(
-            relative_uncertainty
-        )
-
-
-    if not uncertainties:
-
-        return 0.0
-
-
-    average_uncertainty = np.mean(
-        uncertainties
-    )
-
-
-    # Convert ensemble disagreement
-    # into a 0-100 confidence score
-
-    confidence = (
-        100
-        * np.exp(
-            -5 * average_uncertainty
-        )
-    )
-
-
-    confidence = np.clip(
-        confidence,
-        0,
-        100
-    )
-
-
-    return round(
-        float(confidence),
-        1
-    )
+    return {
+        "Confidence": row["Confidence"],
+        "Reliability": row["Reliability"],
+        "Sample_Count": int(row["Samples"]),
+        "Within_QC": float(row["Within_QC_%"])
+    }
 
 
 # ==========================================================
@@ -211,12 +178,11 @@ def predict_quality(
 
 
     # ------------------------------------------------------
-    # Calculate Model Confidence
+    # Confidence & Reliability
     # ------------------------------------------------------
 
-    confidence = calculate_model_confidence(
-        models,
-        X
+    model_reliability = get_model_reliability(
+    seam
     )
 
 
@@ -260,7 +226,10 @@ def predict_quality(
     )
 
 
-    result["Confidence"] = confidence
+    result["Confidence"] = model_reliability["Confidence"]
+    result["Reliability"] = model_reliability["Reliability"]
+    result["Sample_Count"] = model_reliability["Sample_Count"]
+    result["Within_QC"] = model_reliability["Within_QC"]
 
 
     return result
