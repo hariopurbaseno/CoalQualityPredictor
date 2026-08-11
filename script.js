@@ -331,55 +331,50 @@ function resetForm() {
 
 async function copyResult() {
 
-    const seam = document.getElementById("seam").value;
-    const north = document.getElementById("north").value;
-    const east = document.getElementById("east").value;
-    const rl = document.getElementById("rl").value;
+    const cleanValue = (id) => {
+        const text = document.getElementById(id).textContent.trim();
 
+        if (!text || text === "--") {
+            return "";
+        }
 
-    const resultText =
+        // Hapus satuan dan pemisah ribuan
+        return text
+            .replace(/kcal\/kg/g, "")
+            .replace(/%/g, "")
+            .replace(/,/g, "")
+            .trim();
+    };
 
-`COAL QUALITY PREDICTION
-================================
+    const values = [
+        cleanValue("tmar"),
+        cleanValue("im"),
+        cleanValue("vm"),
+        cleanValue("fc"),
+        cleanValue("ash"),
+        cleanValue("ts"),
+        cleanValue("cvdaf"),
+        cleanValue("cvadb"),
+        cleanValue("cvar"),
+        cleanValue("hgi")
+    ];
 
-Input Parameters
-----------------
-Coal Seam       : ${seam}
-North Coordinate: ${north}
-East Coordinate : ${east}
-Elevation (RL)  : ${rl}
-
-Prediction Result
------------------
-TM_AR    : ${document.getElementById("tmar").innerText}
-IM       : ${document.getElementById("im").innerText}
-VM       : ${document.getElementById("vm").innerText}
-FC       : ${document.getElementById("fc").innerText}
-ASH_ADB  : ${document.getElementById("ash").innerText}
-TS       : ${document.getElementById("ts").innerText}
-CV_ADB   : ${document.getElementById("cvadb").innerText}
-CV_AR    : ${document.getElementById("cvar").innerText}
-CV_DAF   : ${document.getElementById("cvdaf").innerText}
-HGI      : ${document.getElementById("hgi").innerText}
-
-================================
-Machine Learning Based Prediction`;
-
+    // TAB = otomatis menjadi kolom saat di-paste ke Excel
+    const resultText = values.join("\t");
 
     try {
 
         await navigator.clipboard.writeText(resultText);
 
-        alert("Prediction result copied.");
+        alert("Prediction values copied.");
 
     } catch (error) {
 
         console.error("Copy failed:", error);
 
-        alert("Unable to copy prediction result.");
+        alert("Unable to copy prediction values.");
 
     }
-
 }// ==========================================================
 // CONFIDENCE LEVEL
 // ==========================================================

@@ -1,67 +1,113 @@
 import joblib
 import pandas as pd
+import numpy as np
 
 
 # ==========================================================
 # LOAD DEPLOYMENT BUNDLE
 # ==========================================================
-import joblib
-import pandas as pd
+
+bundle = joblib.load(
+    "coal_quality_predictor.pkl"
+)
+
+models = bundle["models"]
+
+formula_engine = bundle["formula_engine"]
 
 
 # ==========================================================
-# SAME FUNCTION AS TRAINING NOTEBOOK
+# MODEL CONFIDENCE
 # ==========================================================
 
-def calculate_derived_quality(pred):
+def calculate_model_confidence(models, X):
 
-    pred = pred.copy()
+    uncertainties = []
 
-    pred["VM"] = (
+    for target, model in models.items():
+
+        # Random Forest
+        if not hasattr(model, "estimators_"):
+            continue
+
+        tree_predictions = np.array([
+            estimator.predict(X)[0]
+            for estimator in model.estimators_
+        ])
+
+        mean_prediction = np.mean(
+            tree_predictions
+        )
+
+        std_prediction = np.std(
+            tree_predictions
+        )
+
+        # Relative disagreement between trees
+        relative_uncertainty = (
+            std_prediction
+            / max(abs(mean_prediction), 1e-6)
+        )
+
+        uncertainties.append(
+            relative_uncertainty
+        )
+
+
+    if not uncertainties:
+
+        return 0.0
+
+
+    average_uncertainty = np.mean(
+        uncertainties
+    )
+
+
+    # Convert ensemble disagreement
+    # into a 0-100 confidence score
+
+    confidence = (
         100
-        - pred["IM"]
-        - pred["FC"]
-        - pred["ASH_ADB"]
-    )
-
-    pred["CV_AR"] = (
-        pred["CV_ADB"]
-        * (100 - pred["TM_AR"])
-        / (100 - pred["IM"])
-    )
-
-    pred["CV_DAF"] = (
-        pred["CV_ADB"]
-        * 100
-        / (
-            100
-            - pred["ASH_ADB"]
-            - pred["IM"]
+        * np.exp(
+            -5 * average_uncertainty
         )
     )
 
-    return pred
-import __main__
 
-# Daftarkan fungsi ke modul __main__
-__main__.calculate_derived_quality = calculate_derived_quality
-bundle = joblib.load("coal_quality_predictor.pkl")
+    confidence = np.clip(
+        confidence,
+        0,
+        100
+    )
 
-models = bundle["models"]
-formula_engine = bundle["formula_engine"]
+
+    return round(
+        float(confidence),
+        1
+    )
 
 
 # ==========================================================
 # PREDICTION FUNCTION
 # ==========================================================
 
-def predict_quality(seam, north, east, rl):
+def predict_quality(
+    seam,
+    north,
+    east,
+    rl
+):
 
-    # ------------------------------------------
+    # ------------------------------------------------------
     # Build Feature Table
-    # ------------------------------------------
+    # ------------------------------------------------------
 
-    feature_names = models["TM_AR"].feature_names_in_
+    feature_names = (
+        models["TM_AR"]
+        .feature_names_in_
+    )
+
 
     X = pd.DataFrame(
         0,
@@ -69,30 +115,47 @@ def predict_quality(seam, north, east, rl):
         columns=feature_names
     )
 
-    # ------------------------------------------
+
+    # ------------------------------------------------------
     # Numeric Features
-    # ------------------------------------------
+    # ------------------------------------------------------
 
-    X["North_Center"] = float(north)
-    X["East_Center"] = float(east)
-    X["Elevation (RL)"] = float(rl)
+    X["North_Center"] = float(
+        north
+    )
 
-    # ------------------------------------------
+    X["East_Center"] = float(
+        east
+    )
+
+    X["Elevation (RL)"] = float(
+        rl
+    )
+
+
+    # ------------------------------------------------------
     # One Hot Encoding Seam
-    # ------------------------------------------
+    # ------------------------------------------------------
 
     seam_column = f"Seam_{seam}"
 
+
     if seam_column not in X.columns:
-        raise ValueError(f"Unknown Seam : {seam}")
+
+        raise ValueError(
+            f"Unknown Seam : {seam}"
+        )
+
 
     X[seam_column] = 1
 
-    # ------------------------------------------
+
+    # ------------------------------------------------------
     # Predict Primary Targets
-    # ------------------------------------------
+    # ------------------------------------------------------
 
     prediction = {}
+
 
     for target, model in models.items():
 
@@ -100,38 +163,75 @@ def predict_quality(seam, north, east, rl):
             model.predict(X)[0]
         )
 
-    prediction = pd.DataFrame([prediction])
 
-    # ------------------------------------------
+    prediction = pd.DataFrame(
+        [prediction]
+    )
+
+
+    # ------------------------------------------------------
     # Calculate Derived Quality
-    # ------------------------------------------
+    # ------------------------------------------------------
 
-    prediction = formula_engine(prediction)
+    prediction = formula_engine(
+        prediction
+    )
 
-    # ------------------------------------------
+
+    # ------------------------------------------------------
+    # Calculate Model Confidence
+    # ------------------------------------------------------
+
+    confidence = calculate_model_confidence(
+        models,
+        X
+    )
+
+
+    # ------------------------------------------------------
     # Round Result
-    # ------------------------------------------
+    # ------------------------------------------------------
 
     prediction = prediction.round({
 
-        "TM_AR":2,
-        "IM":2,
-        "VM":2,
-        "FC":2,
-        "ASH_ADB":2,
-        "TS":3,
-        "CV_ADB":0,
-        "CV_AR":0,
-        "CV_DAF":0,
-        "HGI":0
+        "TM_AR": 2,
+
+        "IM": 2,
+
+        "VM": 2,
+
+        "FC": 2,
+
+        "ASH_ADB": 2,
+
+        "TS": 3,
+
+        "CV_ADB": 0,
+
+        "CV_AR": 0,
+
+        "CV_DAF": 0,
+
+        "HGI": 0
 
     })
 
-    # ------------------------------------------
-    # Return Dictionary
-    # ------------------------------------------
 
-    return prediction.iloc[0].to_dict()
+    # ------------------------------------------------------
+    # Return Result
+    # ------------------------------------------------------
+
+    result = (
+        prediction
+        .iloc[0]
+        .to_dict()
+    )
+
+
+    result["Confidence"] = confidence
+
+
+    return result
 
 
 # ==========================================================
@@ -143,8 +243,11 @@ if __name__ == "__main__":
     result = predict_quality(
 
         seam="T117",
+
         north=20219.5,
+
         east=3903,
+
         rl=56
 
     )
