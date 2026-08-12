@@ -161,29 +161,35 @@ async function predictQuality() {
 
         }
 
-// ------------------------------------------------------
-// Update Reliability
-// ------------------------------------------------------
+        // ------------------------------------------------------
+        // Update Reliability
+        // ------------------------------------------------------
 
-document.getElementById("reliability-level").textContent =
-    data.Reliability;
+        document.getElementById("reliability-level").textContent =
+            data.Reliability;
 
-document.getElementById("reliability-detail").textContent =
-    data.Within_QC.toFixed(2) + "% Within ±75 kcal/kg";
+        document.getElementById("reliability-detail").textContent =
+            data.Within_QC.toFixed(2) + "% Within ±75 kcal/kg";
 
 
-// -----------------------------
-// Model Confidence
-// -----------------------------
+        // -----------------------------
+        // Model Confidence
+        // -----------------------------
 
-const confidence = Number(data.Confidence);
+        const confidence = data.Confidence;
 
-document.getElementById("confidence-stars").textContent =
-    getConfidenceStars(confidence);
+        const confidenceStars = {
+            "High": "★★★★★",
+            "Medium": "★★★★☆",
+            "Low": "★★★☆☆",
+            "Very Low": "★☆☆☆☆"
+        };
 
-document.getElementById("confidence-level").textContent =
-    confidence.toFixed(1) + "% — " +
-    getConfidenceLevel(confidence);
+        document.getElementById("confidence-stars").textContent =
+            confidenceStars[confidence] || "☆☆☆☆☆";
+
+        document.getElementById("confidence-level").textContent =
+            confidence;
 
         // --------------------------------------------------
         // Update Prediction Detail
