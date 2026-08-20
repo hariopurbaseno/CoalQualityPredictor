@@ -236,6 +236,16 @@ async function predictQuality() {
         document.getElementById("summary-hgi").textContent =
             formatNumber(data.HGI, 0);
 
+        // --------------------------------------------------
+        // Focus map on predicted coordinate
+        // --------------------------------------------------
+
+        setMapLocation(
+             parseFloat(north),
+            parseFloat(east),
+            true
+        );
+
 
         // --------------------------------------------------
         // Update status
@@ -447,100 +457,683 @@ function getConfidenceStars(confidence) {
 }
 
 // ==========================================================
-// NORTH TUTUPAN MAP — CLICK TO SELECT LOCATION
+// NORTH TUTUPAN INTERACTIVE MAP
 // ==========================================================
 
 const tutupanMap = document.getElementById("tutupan-map");
+const mapContainer = document.querySelector(".map-container");
+const mapStatus = document.getElementById("map-location-status");
 
-if (tutupanMap) {
 
-    tutupanMap.addEventListener("click", function (event) {
+// ----------------------------------------------------------
+// MAP CALIBRATION
+// ----------------------------------------------------------
+//
+// Image size:
+// 3364 × 2380 px
+//
+// EAST:
+// X = 965  → 0
+// X = 1812 → 5000
+// X = 2659 → 10000
+//
+// NORTH:
+// Y = 2121 → 10000
+// Y = 1273 → 15000
+// Y = 425  → 20000
+// ----------------------------------------------------------
 
-        const rect = tutupanMap.getBoundingClientRect();
+const MAP_CALIBRATION = {
 
-        // Posisi klik relatif terhadap gambar yang tampil di browser
-        const displayX = event.clientX - rect.left;
-        const displayY = event.clientY - rect.top;
+    eastPixelMin: 965,
+    eastPixelMax: 2659,
+    eastMin: 0,
+    eastMax: 10000,
 
-        // Skala dari ukuran display ke ukuran asli gambar
-        const scaleX = tutupanMap.naturalWidth / rect.width;
-        const scaleY = tutupanMap.naturalHeight / rect.height;
+    northPixelTop: 425,
+    northPixelBottom: 2121,
+    northMax: 20000,
+    northMin: 10000
 
-        const pixelX = displayX * scaleX;
-        const pixelY = displayY * scaleY;
+};
 
-        // --------------------------------------------------
-        // MAP CALIBRATION
-        // Image size: 3364 × 2380
-        // East  : 0 → 20000
-        // North : 10000 → 20000
-        // --------------------------------------------------
 
-        const EAST_LEFT = 0;
-        const EAST_RIGHT = 20000;
+// ----------------------------------------------------------
+// MAP STATE
+// ----------------------------------------------------------
 
-        const NORTH_BOTTOM = 10000;
-        const NORTH_TOP = 20000;
+const mapState = {
 
-        const IMAGE_WIDTH = 3364;
-        const IMAGE_HEIGHT = 2380;
+    scale: 1,
+    baseScale: 1,
+
+    left: 0,
+    top: 0,
+
+    dragging: false,
+
+    dragStartX: 0,
+    dragStartY: 0,
+
+    startLeft: 0,
+    startTop: 0,
+
+    selectedPixelX: null,
+    selectedPixelY: null
+
+};
+
+
+// ----------------------------------------------------------
+// INITIALIZE MAP
+// ----------------------------------------------------------
+
+function initializeTutupanMap() {
+
+    if (!tutupanMap || !mapContainer) {
+        return;
+    }
+
+    if (!tutupanMap.complete) {
+
+        tutupanMap.addEventListener(
+            "load",
+            initializeTutupanMap,
+            { once: true }
+        );
+
+        return;
+    }
+
+    calculateBaseMap();
+
+}
+
+
+// ----------------------------------------------------------
+// CALCULATE BASE MAP
+// ----------------------------------------------------------
+
+function calculateBaseMap() {
+
+    const containerWidth =
+        mapContainer.clientWidth;
+
+    const containerHeight =
+        mapContainer.clientHeight;
+
+    const imageWidth =
+        tutupanMap.naturalWidth;
+
+    const imageHeight =
+        tutupanMap.naturalHeight;
+
+
+    // Cover the available map area.
+    mapState.baseScale = Math.max(
+        containerWidth / imageWidth,
+        containerHeight / imageHeight
+    );
+
+    mapState.scale =
+        mapState.baseScale;
+
+
+    const displayWidth =
+        imageWidth * mapState.scale;
+
+    const displayHeight =
+        imageHeight * mapState.scale;
+
+
+    mapState.left =
+        (containerWidth - displayWidth) / 2;
+
+    mapState.top =
+        (containerHeight - displayHeight) / 2;
+
+
+    renderMap();
+
+}
+
+
+// ----------------------------------------------------------
+// RENDER MAP
+// ----------------------------------------------------------
+
+function renderMap() {
+
+    if (!tutupanMap || !mapContainer) {
+        return;
+    }
+
+
+    const width =
+        tutupanMap.naturalWidth *
+        mapState.scale;
+
+    const height =
+        tutupanMap.naturalHeight *
+        mapState.scale;
+
+
+    tutupanMap.style.width =
+        width + "px";
+
+    tutupanMap.style.height =
+        height + "px";
+
+    tutupanMap.style.left =
+        mapState.left + "px";
+
+    tutupanMap.style.top =
+        mapState.top + "px";
+
+
+    updateMarker();
+
+}
+
+
+// ----------------------------------------------------------
+// PIXEL → EAST
+// ----------------------------------------------------------
+
+function pixelToEast(pixelX) {
+
+    const ratio =
+        (pixelX - MAP_CALIBRATION.eastPixelMin) /
+        (
+            MAP_CALIBRATION.eastPixelMax -
+            MAP_CALIBRATION.eastPixelMin
+        );
+
+    return (
+        MAP_CALIBRATION.eastMin +
+        ratio *
+        (
+            MAP_CALIBRATION.eastMax -
+            MAP_CALIBRATION.eastMin
+        )
+    );
+
+}
+
+
+// ----------------------------------------------------------
+// PIXEL → NORTH
+// ----------------------------------------------------------
+
+function pixelToNorth(pixelY) {
+
+    const ratio =
+        (pixelY - MAP_CALIBRATION.northPixelTop) /
+        (
+            MAP_CALIBRATION.northPixelBottom -
+            MAP_CALIBRATION.northPixelTop
+        );
+
+    return (
+        MAP_CALIBRATION.northMax -
+        ratio *
+        (
+            MAP_CALIBRATION.northMax -
+            MAP_CALIBRATION.northMin
+        )
+    );
+
+}
+
+
+// ----------------------------------------------------------
+// EAST → PIXEL
+// ----------------------------------------------------------
+
+function eastToPixel(east) {
+
+    return MAP_CALIBRATION.eastPixelMin +
+        (
+            (east - MAP_CALIBRATION.eastMin) /
+            (
+                MAP_CALIBRATION.eastMax -
+                MAP_CALIBRATION.eastMin
+            )
+        ) *
+        (
+            MAP_CALIBRATION.eastPixelMax -
+            MAP_CALIBRATION.eastPixelMin
+        );
+
+}
+
+
+// ----------------------------------------------------------
+// NORTH → PIXEL
+// ----------------------------------------------------------
+
+function northToPixel(north) {
+
+    return MAP_CALIBRATION.northPixelTop +
+        (
+            (MAP_CALIBRATION.northMax - north) /
+            (
+                MAP_CALIBRATION.northMax -
+                MAP_CALIBRATION.northMin
+            )
+        ) *
+        (
+            MAP_CALIBRATION.northPixelBottom -
+            MAP_CALIBRATION.northPixelTop
+        );
+
+}
+
+
+// ----------------------------------------------------------
+// CREATE / UPDATE MARKER
+// ----------------------------------------------------------
+
+function updateMarker() {
+
+    if (
+        mapState.selectedPixelX === null ||
+        mapState.selectedPixelY === null
+    ) {
+        return;
+    }
+
+
+    let marker =
+        document.getElementById("map-marker");
+
+
+    if (!marker) {
+
+        marker =
+            document.createElement("div");
+
+        marker.id =
+            "map-marker";
+
+        mapContainer.appendChild(marker);
+
+    }
+
+
+    marker.style.left =
+        (
+            mapState.left +
+            mapState.selectedPixelX *
+            mapState.scale
+        ) + "px";
+
+
+    marker.style.top =
+        (
+            mapState.top +
+            mapState.selectedPixelY *
+            mapState.scale
+        ) + "px";
+
+}
+
+
+// ----------------------------------------------------------
+// SET MAP LOCATION
+// ----------------------------------------------------------
+
+function setMapLocation(
+    north,
+    east,
+    zoomToLocation = false
+) {
+
+    if (!tutupanMap || !mapContainer) {
+        return;
+    }
+
+
+    const pixelX =
+        eastToPixel(east);
+
+    const pixelY =
+        northToPixel(north);
+
+
+    mapState.selectedPixelX =
+        pixelX;
+
+    mapState.selectedPixelY =
+        pixelY;
+
+
+    if (zoomToLocation) {
+
+        const targetZoom = 2.5;
+
+        mapState.scale =
+            mapState.baseScale *
+            targetZoom;
+
+
+        const containerWidth =
+            mapContainer.clientWidth;
+
+        const containerHeight =
+            mapContainer.clientHeight;
+
+
+        mapState.left =
+            containerWidth / 2 -
+            pixelX * mapState.scale;
+
+
+        mapState.top =
+            containerHeight / 2 -
+            pixelY * mapState.scale;
+
+    }
+
+
+    renderMap();
+
+
+    if (mapStatus) {
+
+        mapStatus.textContent =
+            "N " +
+            Number(north).toFixed(3) +
+            "  |  E " +
+            Number(east).toFixed(3);
+
+    }
+
+}
+
+
+// ----------------------------------------------------------
+// CLICK MAP
+// ----------------------------------------------------------
+
+mapContainer?.addEventListener(
+    "click",
+    function (event) {
+
+        // Ignore click after dragging
+        if (mapState.dragging) {
+            return;
+        }
+
+
+        const rect =
+            mapContainer.getBoundingClientRect();
+
+
+        const containerX =
+            event.clientX -
+            rect.left;
+
+        const containerY =
+            event.clientY -
+            rect.top;
+
+
+        const pixelX =
+            (
+                containerX -
+                mapState.left
+            ) /
+            mapState.scale;
+
+
+        const pixelY =
+            (
+                containerY -
+                mapState.top
+            ) /
+            mapState.scale;
+
+
+        // Ignore clicks outside image
+        if (
+            pixelX < 0 ||
+            pixelX > tutupanMap.naturalWidth ||
+            pixelY < 0 ||
+            pixelY > tutupanMap.naturalHeight
+        ) {
+            return;
+        }
+
 
         const east =
-            EAST_LEFT +
-            (pixelX / IMAGE_WIDTH) *
-            (EAST_RIGHT - EAST_LEFT);
+            pixelToEast(pixelX);
 
         const north =
-            NORTH_BOTTOM +
-            (1 - pixelY / IMAGE_HEIGHT) *
-            (NORTH_TOP - NORTH_BOTTOM);
+            pixelToNorth(pixelY);
 
-        // --------------------------------------------------
-        // Fill coordinate inputs
-        // --------------------------------------------------
 
+        // Update input fields
         document.getElementById("north").value =
             north.toFixed(3);
 
         document.getElementById("east").value =
             east.toFixed(3);
 
-        // --------------------------------------------------
-        // Visual marker
-        // --------------------------------------------------
 
-        let marker = document.getElementById("map-marker");
+        setMapLocation(
+            north,
+            east,
+            false
+        );
 
-        if (!marker) {
+    }
+);
 
-            marker = document.createElement("div");
 
-            marker.id = "map-marker";
+// ----------------------------------------------------------
+// MOUSE WHEEL ZOOM
+// ----------------------------------------------------------
 
-            marker.style.position = "absolute";
-            marker.style.width = "14px";
-            marker.style.height = "14px";
-            marker.style.background = "#e53935";
-            marker.style.border = "3px solid white";
-            marker.style.borderRadius = "50%";
-            marker.style.boxShadow = "0 2px 6px rgba(0,0,0,0.35)";
-            marker.style.transform = "translate(-50%, -50%)";
-            marker.style.pointerEvents = "none";
+mapContainer?.addEventListener(
+    "wheel",
+    function (event) {
 
-            tutupanMap.parentElement.style.position = "relative";
-            tutupanMap.parentElement.appendChild(marker);
+        event.preventDefault();
+
+
+        const rect =
+            mapContainer.getBoundingClientRect();
+
+
+        const mouseX =
+            event.clientX -
+            rect.left;
+
+        const mouseY =
+            event.clientY -
+            rect.top;
+
+
+        const oldScale =
+            mapState.scale;
+
+
+        const zoomFactor =
+            event.deltaY < 0
+                ? 1.15
+                : 0.87;
+
+
+        const minZoom =
+            mapState.baseScale * 0.75;
+
+        const maxZoom =
+            mapState.baseScale * 6;
+
+
+        const newScale =
+            Math.min(
+                maxZoom,
+                Math.max(
+                    minZoom,
+                    oldScale * zoomFactor
+                )
+            );
+
+
+        // Keep the point under the mouse fixed
+        const imageX =
+            (
+                mouseX -
+                mapState.left
+            ) /
+            oldScale;
+
+
+        const imageY =
+            (
+                mouseY -
+                mapState.top
+            ) /
+            oldScale;
+
+
+        mapState.scale =
+            newScale;
+
+
+        mapState.left =
+            mouseX -
+            imageX *
+            newScale;
+
+
+        mapState.top =
+            mouseY -
+            imageY *
+            newScale;
+
+
+        renderMap();
+
+    },
+    { passive: false }
+);
+
+
+// ----------------------------------------------------------
+// DRAG / PAN MAP
+// ----------------------------------------------------------
+
+mapContainer?.addEventListener(
+    "mousedown",
+    function (event) {
+
+        mapState.dragging =
+            false;
+
+        mapState.dragStartX =
+            event.clientX;
+
+        mapState.dragStartY =
+            event.clientY;
+
+        mapState.startLeft =
+            mapState.left;
+
+        mapState.startTop =
+            mapState.top;
+
+    }
+);
+
+
+mapContainer?.addEventListener(
+    "mousemove",
+    function (event) {
+
+        if (
+            event.buttons !== 1
+        ) {
+            return;
         }
 
-        marker.style.left = displayX + "px";
-        marker.style.top = displayY + "px";
 
-        console.log("Map selection:", {
-            pixelX: pixelX,
-            pixelY: pixelY,
-            east: east,
-            north: north
-        });
+        const dx =
+            event.clientX -
+            mapState.dragStartX;
 
-    });
+        const dy =
+            event.clientY -
+            mapState.dragStartY;
 
-}
+
+        if (
+            Math.abs(dx) > 3 ||
+            Math.abs(dy) > 3
+        ) {
+            mapState.dragging =
+                true;
+        }
+
+
+        mapState.left =
+            mapState.startLeft +
+            dx;
+
+        mapState.top =
+            mapState.startTop +
+            dy;
+
+
+        renderMap();
+
+    }
+);
+
+
+mapContainer?.addEventListener(
+    "mouseup",
+    function () {
+
+        setTimeout(
+            function () {
+                mapState.dragging = false;
+            },
+            0
+        );
+
+    }
+);
+
+
+mapContainer?.addEventListener(
+    "mouseleave",
+    function () {
+
+        if (
+            mapState.dragging
+        ) {
+            mapState.dragging = false;
+        }
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// INITIALIZE
+// ----------------------------------------------------------
+
+initializeTutupanMap();
+
+
+window.addEventListener(
+    "resize",
+    function () {
+
+        calculateBaseMap();
+
+    }
+);
