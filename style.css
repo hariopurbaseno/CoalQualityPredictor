@@ -521,13 +521,14 @@ td:last-child {
 
 #map-vectors-wrapper {
     position: absolute;
+
     left: 0;
     top: 0;
 
-    width: 100%;
-    height: 100%;
+    width: 3364px;
+    height: 2380px;
 
-    overflow: visible;
+    transform-origin: 0 0;
 
     pointer-events: none;
 
@@ -536,7 +537,6 @@ td:last-child {
 
 #map-vectors-overlay {
     position: absolute;
-
     left: 0;
     top: 0;
 
@@ -546,8 +546,8 @@ td:last-child {
     max-width: none;
     max-height: none;
 
+    display: block;
+
     pointer-events: none;
     user-select: none;
-
-    transform-origin: 0 0;
 }

@@ -631,14 +631,16 @@ function renderMap() {
     tutupanMap.style.top =
         mapState.top + "px";
 
-    if (mapVectorsOverlay) {
+    if (mapVectorsWrapper) {
 
-            const vectorScale =
-                mapState.scale * 4;
+    mapVectorsWrapper.style.left =
+        mapState.left + "px";
 
-            mapVectorsOverlay.style.transform =
-                `translate(${mapState.left}px, ${mapState.top}px) ` +
-                `scale(${vectorScale})`;
+    mapVectorsWrapper.style.top =
+        mapState.top + "px";
+
+    mapVectorsWrapper.style.transform =
+        `scale(${mapState.scale})`;
     }
 
     updateMarker();
