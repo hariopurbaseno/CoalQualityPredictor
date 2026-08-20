@@ -981,7 +981,7 @@ mapContainer?.addEventListener(
             mapState.baseScale * 0.75;
 
         const maxZoom =
-            mapState.baseScale * 6;
+            mapState.baseScale * 12;
 
 
         const newScale =
