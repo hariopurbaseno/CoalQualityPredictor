@@ -518,3 +518,19 @@ td:last-child {
 #map-location-status {
     white-space: nowrap;
 }
+
+#map-vectors-overlay {
+    position: absolute;
+    display: block;
+
+    max-width: none;
+    max-height: none;
+
+    width: auto;
+    height: auto;
+
+    user-select: none;
+    pointer-events: none;
+
+    z-index: 2;
+}

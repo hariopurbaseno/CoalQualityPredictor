@@ -461,6 +461,7 @@ function getConfidenceStars(confidence) {
 // ==========================================================
 
 const tutupanMap = document.getElementById("tutupan-map");
+const mapVectorsOverlay = document.getElementById("map-vectors-overlay");
 const mapContainer = document.querySelector(".map-container");
 const mapStatus = document.getElementById("map-location-status");
 
@@ -630,6 +631,20 @@ function renderMap() {
     tutupanMap.style.top =
         mapState.top + "px";
 
+    if (mapVectorsOverlay) {
+
+    mapVectorsOverlay.style.width =
+        width + "px";
+
+    mapVectorsOverlay.style.height =
+        height + "px";
+
+    mapVectorsOverlay.style.left =
+        mapState.left + "px";
+
+    mapVectorsOverlay.style.top =
+        mapState.top + "px";
+    }
 
     updateMarker();
 
