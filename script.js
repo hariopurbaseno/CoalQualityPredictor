@@ -485,13 +485,13 @@ const mapStatus = document.getElementById("map-location-status");
 
 const MAP_CALIBRATION = {
 
-    eastPixelMin: 965,
-    eastPixelMax: 2659,
+    eastPixelMin: 1005,
+    eastPixelMax: 2770,
     eastMin: 0,
     eastMax: 10000,
 
-    northPixelTop: 425,
-    northPixelBottom: 2121,
+    northPixelTop: 442,
+    northPixelBottom: 2210,
     northMax: 20000,
     northMin: 10000
 
@@ -810,7 +810,7 @@ function setMapLocation(
 
     if (zoomToLocation) {
 
-        const targetZoom = 2.5;
+        const targetZoom = 4.0;
 
         mapState.scale =
             mapState.baseScale *
