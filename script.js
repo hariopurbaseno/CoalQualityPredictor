@@ -445,3 +445,102 @@ function getConfidenceStars(confidence) {
     return "★".repeat(stars) +
            "☆".repeat(5 - stars);
 }
+
+// ==========================================================
+// NORTH TUTUPAN MAP — CLICK TO SELECT LOCATION
+// ==========================================================
+
+const tutupanMap = document.getElementById("tutupan-map");
+
+if (tutupanMap) {
+
+    tutupanMap.addEventListener("click", function (event) {
+
+        const rect = tutupanMap.getBoundingClientRect();
+
+        // Posisi klik relatif terhadap gambar yang tampil di browser
+        const displayX = event.clientX - rect.left;
+        const displayY = event.clientY - rect.top;
+
+        // Skala dari ukuran display ke ukuran asli gambar
+        const scaleX = tutupanMap.naturalWidth / rect.width;
+        const scaleY = tutupanMap.naturalHeight / rect.height;
+
+        const pixelX = displayX * scaleX;
+        const pixelY = displayY * scaleY;
+
+        // --------------------------------------------------
+        // MAP CALIBRATION
+        // Image size: 3364 × 2380
+        // East  : 0 → 20000
+        // North : 10000 → 20000
+        // --------------------------------------------------
+
+        const EAST_LEFT = 0;
+        const EAST_RIGHT = 20000;
+
+        const NORTH_BOTTOM = 10000;
+        const NORTH_TOP = 20000;
+
+        const IMAGE_WIDTH = 3364;
+        const IMAGE_HEIGHT = 2380;
+
+        const east =
+            EAST_LEFT +
+            (pixelX / IMAGE_WIDTH) *
+            (EAST_RIGHT - EAST_LEFT);
+
+        const north =
+            NORTH_BOTTOM +
+            (1 - pixelY / IMAGE_HEIGHT) *
+            (NORTH_TOP - NORTH_BOTTOM);
+
+        // --------------------------------------------------
+        // Fill coordinate inputs
+        // --------------------------------------------------
+
+        document.getElementById("north").value =
+            north.toFixed(3);
+
+        document.getElementById("east").value =
+            east.toFixed(3);
+
+        // --------------------------------------------------
+        // Visual marker
+        // --------------------------------------------------
+
+        let marker = document.getElementById("map-marker");
+
+        if (!marker) {
+
+            marker = document.createElement("div");
+
+            marker.id = "map-marker";
+
+            marker.style.position = "absolute";
+            marker.style.width = "14px";
+            marker.style.height = "14px";
+            marker.style.background = "#e53935";
+            marker.style.border = "3px solid white";
+            marker.style.borderRadius = "50%";
+            marker.style.boxShadow = "0 2px 6px rgba(0,0,0,0.35)";
+            marker.style.transform = "translate(-50%, -50%)";
+            marker.style.pointerEvents = "none";
+
+            tutupanMap.parentElement.style.position = "relative";
+            tutupanMap.parentElement.appendChild(marker);
+        }
+
+        marker.style.left = displayX + "px";
+        marker.style.top = displayY + "px";
+
+        console.log("Map selection:", {
+            pixelX: pixelX,
+            pixelY: pixelY,
+            east: east,
+            north: north
+        });
+
+    });
+
+}

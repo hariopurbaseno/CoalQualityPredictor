@@ -414,3 +414,42 @@ td:last-child {
         flex-direction: column;
     }
 }
+
+/* ======================================================
+   NORTH TUTUPAN MAP
+   ====================================================== */
+
+.map-section {
+    margin-top: 24px;
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.map-header h2 {
+    margin: 0;
+}
+
+.map-header p {
+    margin: 4px 0 0;
+    color: #777;
+    font-size: 13px;
+}
+
+.map-container {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #d9dfe3;
+    background: #f5f7f8;
+}
+
+#tutupan-map {
+    display: block;
+    width: 100%;
+    height: auto;
+}
