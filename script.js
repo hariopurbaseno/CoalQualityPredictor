@@ -324,6 +324,12 @@ function resetForm() {
     document.getElementById("summary-cvar").textContent = "--";
     document.getElementById("summary-hgi").textContent = "--";
 
+    document.getElementById("confidence-stars").textContent = "--";
+    document.getElementById("confidence-level").textContent = "--";
+
+    document.getElementById("reliability-level").textContent = "--";
+    document.getElementById("reliability-detail").textContent = "--";
+
 
     document.getElementById("tmar").textContent = "--";
     document.getElementById("im").textContent = "--";
