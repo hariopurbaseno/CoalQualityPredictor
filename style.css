@@ -481,6 +481,18 @@ td:last-child {
     cursor: grab;
 }
 
+@keyframes markerPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.25);
+        opacity: 0.75;
+    }
+}
+
 #map-marker {
     position: absolute;
     width: 16px;
@@ -490,6 +502,7 @@ td:last-child {
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
     transform: translate(-50%, -50%);
+    animation: markerPulse 1.2s ease-in-out infinite;
     pointer-events: none;
     z-index: 10;
 }

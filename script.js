@@ -863,6 +863,105 @@ function setMapLocation(
 
 }
 
+// ----------------------------------------------------------
+// LIVE POINTER COORDINATE
+// ----------------------------------------------------------
+
+function updatePointerCoordinate(event) {
+
+    if (!tutupanMap || !mapContainer || !mapStatus) {
+        return;
+    }
+
+    const rect =
+        mapContainer.getBoundingClientRect();
+
+    const containerX =
+        event.clientX -
+        rect.left;
+
+    const containerY =
+        event.clientY -
+        rect.top;
+
+    const pixelX =
+        (
+            containerX -
+            mapState.left
+        ) /
+        mapState.scale;
+
+    const pixelY =
+        (
+            containerY -
+            mapState.top
+        ) /
+        mapState.scale;
+
+    // Ignore pointer outside image
+    if (
+        pixelX < 0 ||
+        pixelX > tutupanMap.naturalWidth ||
+        pixelY < 0 ||
+        pixelY > tutupanMap.naturalHeight
+    ) {
+        return;
+    }
+
+    const east =
+        pixelToEast(pixelX);
+
+    const north =
+        pixelToNorth(pixelY);
+
+    mapStatus.textContent =
+        "N " +
+        north.toFixed(3) +
+        "  |  E " +
+        east.toFixed(3);
+}
+
+mapContainer?.addEventListener(
+    "mousemove",
+    updatePointerCoordinate
+);
+
+// ----------------------------------------------------------
+// MOUSE LEAVE
+// ----------------------------------------------------------
+
+mapContainer?.addEventListener(
+    "mouseleave",
+    function () {
+
+        if (
+            mapState.selectedPixelX === null ||
+            mapState.selectedPixelY === null ||
+            !mapStatus
+        ) {
+            mapStatus.textContent =
+                "No location selected";
+
+            return;
+        }
+
+        const east =
+            pixelToEast(
+                mapState.selectedPixelX
+            );
+
+        const north =
+            pixelToNorth(
+                mapState.selectedPixelY
+            );
+
+        mapStatus.textContent =
+            "N " +
+            north.toFixed(3) +
+            "  |  E " +
+            east.toFixed(3);
+    }
+);
 
 // ----------------------------------------------------------
 // CLICK MAP
