@@ -486,13 +486,13 @@ const mapStatus = document.getElementById("map-location-status");
 
 const MAP_CALIBRATION = {
 
-    eastPixelMin: 1005,
-    eastPixelMax: 2770,
+    eastPixelMin: 965,
+    eastPixelMax: 2659,
     eastMin: 0,
     eastMax: 10000,
 
-    northPixelTop: 442,
-    northPixelBottom: 2210,
+    northPixelTop: 425,
+    northPixelBottom: 2121,
     northMax: 20000,
     northMin: 10000
 
