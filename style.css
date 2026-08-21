@@ -208,21 +208,37 @@ body {
 }
 
 /* =========================
+   PREDICTION RESULTS LAYOUT
+========================= */
+
+.prediction-layout {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.prediction-summary h2,
+.prediction-detail h2 {
+    margin-top: 0;
+}
+
+/* =========================
    SUMMARY CARDS
 ========================= */
 
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 0;
 }
 
 .summary-card {
     min-height: 105px;
     border: 1px solid #e0e5ea;
     border-radius: 6px;
-    padding: 14px 15px;
+    padding: 12px 14px;
     background: white;
 }
 
@@ -316,6 +332,7 @@ body {
 
 table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     border: 1px solid #dfe4ea;
     border-radius: 5px;
@@ -331,12 +348,21 @@ th {
     text-align: left;
     color: #42586c;
     font-weight: 700;
-    padding: 10px 12px;
+    padding: 8px 12px;
     border-bottom: 1px solid #d7dfe7;
 }
 
+th:first-child {
+    width: 45%;
+}
+
+th:last-child {
+    width: 55%;
+    text-align: right;
+}
+
 td {
-    padding: 9px 12px;
+    padding: 7px 12px;
     border-bottom: 1px solid #e8ecf0;
     color: #39454f;
 }
@@ -366,6 +392,10 @@ td:last-child {
 
     .summary-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .prediction-layout {
+        grid-template-columns: 1fr;
     }
 
     .header-left h1 {

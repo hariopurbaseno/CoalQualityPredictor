@@ -96,64 +96,139 @@
 <span class="status-ready">🟢 Ready</span>
 </div>
 
-<h2>Prediction Summary</h2>
+<div class="prediction-layout">
 
-<div class="summary-grid">
+    <!-- =========================
+         PREDICTION SUMMARY
+    ========================== -->
 
-<div class="summary-card blue">
-<small>CV_AR</small>
-<h2 id="summary-cvar">--</h2>
-<span>kcal/kg</span>
+    <section class="prediction-summary">
+
+        <h2>Prediction Summary</h2>
+
+        <div class="summary-grid">
+
+            <div class="summary-card blue">
+                <small>CV_AR</small>
+                <h2 id="summary-cvar">--</h2>
+                <span>kcal/kg</span>
+            </div>
+
+            <div class="summary-card green">
+                <small>HGI</small>
+                <h2 id="summary-hgi">--</h2>
+                <span>Hardgrove Index</span>
+            </div>
+
+            <div class="summary-card orange">
+                <small>Model Confidence</small>
+
+                <strong id="confidence-stars">
+                    --
+                </strong>
+
+                <span id="confidence-level">
+                    --
+                </span>
+            </div>
+
+            <div class="summary-card cyan">
+                <small>Reliability</small>
+                <h2 id="reliability-level">--</h2>
+                <span id="reliability-detail">--</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PREDICTION DETAIL
+    ========================== -->
+
+    <section class="prediction-detail">
+
+        <div class="detail-header">
+            <h2>Prediction Detail</h2>
+
+            <button
+                class="copy-btn"
+                onclick="copyResult()"
+            >
+                📋 Copy Result
+            </button>
+        </div>
+
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Prediction</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>TM_AR</td>
+                    <td id="tmar">--</td>
+                </tr>
+
+                <tr>
+                    <td>IM</td>
+                    <td id="im">--</td>
+                </tr>
+
+                <tr>
+                    <td>VM</td>
+                    <td id="vm">--</td>
+                </tr>
+
+                <tr>
+                    <td>FC</td>
+                    <td id="fc">--</td>
+                </tr>
+
+                <tr>
+                    <td>ASH_ADB</td>
+                    <td id="ash">--</td>
+                </tr>
+
+                <tr>
+                    <td>TS</td>
+                    <td id="ts">--</td>
+                </tr>
+
+                <tr>
+                    <td>CV_DAF</td>
+                    <td id="cvdaf">--</td>
+                </tr>
+
+                <tr>
+                    <td>CV_ADB</td>
+                    <td id="cvadb">--</td>
+                </tr>
+
+                <tr>
+                    <td>CV_AR</td>
+                    <td id="cvar">--</td>
+                </tr>
+
+                <tr>
+                    <td>HGI</td>
+                    <td id="hgi">--</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
 </div>
-
-<div class="summary-card green">
-<small>HGI</small>
-<h2 id="summary-hgi">--</h2>
-<span>Hardgrove Index</span>
-</div>
-
-<div class="summary-card orange">
-    <small>Model Confidence</small>
-
-    <strong id="confidence-stars">
-        --
-    </strong>
-
-    <span id="confidence-level">
-        --
-    </span>
-</div>
-
-<div class="summary-card cyan">
-    <small>Reliability</small>
-    <h2 id="reliability-level">--</h2>
-    <span id="reliability-detail">--</span>
-</div>
-
-</div>
-
-<div class="detail-header">
-<h2>Prediction Detail</h2>
-<button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
-</div>
-
-<table>
-<thead>
-<tr><th>Parameter</th><th>Prediction</th></tr>
-</thead>
-<tbody>
-<tr><td>TM_AR</td><td id="tmar">--</td></tr>
-<tr><td>IM</td><td id="im">--</td></tr>
-<tr><td>VM</td><td id="vm">--</td></tr>
-<tr><td>FC</td><td id="fc">--</td></tr>
-<tr><td>ASH_ADB</td><td id="ash">--</td></tr>
-<tr><td>TS</td><td id="ts">--</td></tr>
-<tr><td>CV_DAF</td><td id="cvdaf">--</td></tr>
-<tr><td>CV_ADB</td><td id="cvadb">--</td></tr>
-<tr><td>CV_AR</td><td id="cvar">--</td></tr>
-<tr><td>HGI</td><td id="hgi">--</td></tr>
-</tbody>
-</table>
 
 </main>
 
